@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { BriefcaseBusiness, Clock3, MapPin, ArrowLeft } from "lucide-react";
 import "./MyApplications.css";
 
-const API_URL = "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 function MyApplications({ token, onBack }) {
   const [applications, setApplications] = useState([]);

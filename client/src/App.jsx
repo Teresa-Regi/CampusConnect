@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import "./App.css";
 
-const API_URL = "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 function App() {
   const [jobs, setJobs] = useState([]);
@@ -187,8 +187,10 @@ if (!jobId) {
 }
 
   try {
-    const response = await fetch(
-      "http://localhost:5000/api/applications",
+    
+const response = await fetch(
+  `${API_URL}/api/applications`,
+
       {
         method: "POST",
         headers: {
