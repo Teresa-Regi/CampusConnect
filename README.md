@@ -251,6 +251,7 @@ Automated test coverage and production deployment checks remain future improveme
 ## 16. Project Links
 
 - GitHub Repository: https://github.com/Teresa-Regi/CampusConnect.git
+Live Link:campus-connect-six-liart.vercel.app
 
 
 ## 17. Acknowledgement
