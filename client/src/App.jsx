@@ -358,7 +358,9 @@ const response = await fetch(
 <main>
   {location.pathname === "/about" ? (
     <AboutPage />
-  ) : location.pathname === "/jobs" ? (
+  
+) : location.pathname === "/jobs" ? (
+  user && token ? (
     <JobsPage
       jobs={jobs}
       loading={loading}
@@ -367,7 +369,34 @@ const response = await fetch(
       onApply={(job) => handleApplyClick(job)}
       onBack={() => navigate("/")}
     />
-  ) : location.pathname === "/internships" ? (
+  ) : (
+    <div className="opportunities-section">
+      <div className="section-heading">
+        <div>
+          <p className="section-label">MEMBER ACCESS</p>
+          <h2>Sign in to explore opportunities</h2>
+          <p className="section-description">
+            Log in to discover jobs, view details, and apply for opportunities.
+          </p>
+          <button
+            className="btn btn-primary"
+            onClick={() => openAuth("login")}
+          >
+            Log In
+          </button>
+          <button
+            className="btn btn-outline"
+            onClick={() => openAuth("register")}
+          >
+            Create Account
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+
+) : location.pathname === "/internships" ? (
+  user && token ? (
     <InternshipsPage
       jobs={jobs}
       loading={loading}
@@ -376,6 +405,32 @@ const response = await fetch(
       onApply={(job) => handleApplyClick(job)}
       onBack={() => navigate("/")}
     />
+  ) : (
+    <div className="opportunities-section">
+      <div className="section-heading">
+        <div>
+          <p className="section-label">MEMBER ACCESS</p>
+          <h2>Sign in to explore internships</h2>
+          <p className="section-description">
+            Log in to discover internships, view details, and apply for opportunities.
+          </p>
+          <button
+            className="btn btn-primary"
+            onClick={() => openAuth("login")}
+          >
+            Log In
+          </button>
+          <button
+            className="btn btn-outline"
+            onClick={() => openAuth("register")}
+          >
+            Create Account
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+
   ) : (
     <>
       {/* HERO SECTION */}
@@ -516,87 +571,98 @@ const response = await fetch(
       </section>
 
       {/* FEATURED OPPORTUNITIES SECTION */}
-      <section className="opportunities-section" id="opportunities">
-        <div className="section-heading">
-          <div>
-            <p className="section-label">TAKE THE NEXT STEP</p>
-            <h2>Featured opportunities</h2>
-            <p className="section-description">
-              Explore internships and jobs stored in CampusConnect.
-            </p>
-          </div>
-
-          <span className="listing-count">
-            {filteredJobs.length} opportunities
-          </span>
+      
+<section className="opportunities-section" id="opportunities">
+  {user && token ? (
+    <>
+      <div className="section-heading">
+        <div>
+          <p className="section-label">TAKE THE NEXT STEP</p>
+          <h2>Featured opportunities</h2>
+          <p className="section-description">
+            Explore internships and jobs stored in CampusConnect.
+          </p>
         </div>
+        <span className="listing-count">
+          {filteredJobs.length} opportunities
+        </span>
+      </div>
 
-        {loading ? (
-          <p className="jobs-message">Loading opportunities...</p>
-        ) : jobError ? (
-          <p className="jobs-message error-message">{jobError}</p>
-        ) : filteredJobs.length > 0 ? (
-          <div className="job-grid">
-            {filteredJobs.map((job) => (
-              <article
-                className="job-card"
-                key={job._id || job.id}
-              >
-                <div className="job-card-top">
-                  <div className={`company-logo ${job.color || "blue"}`}>
-                    {(job.company || "?").charAt(0).toUpperCase()}
-                  </div>
-                  <span className="job-type">{job.type}</span>
+      {loading ? (
+        <p className="jobs-message">Loading opportunities...</p>
+      ) : jobError ? (
+        <p className="jobs-message error-message">{jobError}</p>
+      ) : filteredJobs.length > 0 ? (
+        <div className="job-grid">
+          {filteredJobs.map((job) => (
+            <article className="job-card" key={job._id || job.id}>
+              <div className="job-card-top">
+                <div className={`company-logo ${job.color || "blue"}`}>
+                  {(job.company || "?").charAt(0).toUpperCase()}
                 </div>
+                <span className="job-type">{job.type}</span>
+              </div>
 
-                <h3>{job.role}</h3>
-                <p className="company-name">{job.company}</p>
+              <h3>{job.role}</h3>
+              <p className="company-name">{job.company}</p>
 
-                <div className="job-details">
-                  <span>
-                    <MapPin size={15} /> {job.location}
-                  </span>
-                  <span>
-                    <Clock3 size={15} /> {job.duration || "Not specified"}
-                  </span>
-                </div>
+              <div className="job-details">
+                <span><MapPin size={15} /> {job.location}</span>
+                <span><Clock3 size={15} /> {job.duration || "Not specified"}</span>
+              </div>
 
-                <div className="job-card-bottom">
-                  <span className="category-tag">{job.category}</span>
+              <div className="job-card-bottom">
+                <span className="category-tag">{job.category}</span>
+                <button
+                  className="apply-link"
+                  onClick={() => setSelectedJob(job)}
+                >
+                  View Details <ArrowRight size={16} />
+                </button>
+                <button
+                  className="apply-link"
+                  onClick={() => handleApplyClick(job)}
+                >
+                  Apply Now
+                </button>
+              </div>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <div className="empty-state">
+          <Search size={30} />
+          <h3>No matching opportunities</h3>
+          <p>Try another job title, company, location or category.</p>
+          <button
+            className="btn btn-outline"
+            onClick={() => setSearch("")}
+          >
+            Clear search
+          </button>
+        </div>
+      )}
+    </>
+  ) : (
+    <div className="section-heading">
+      <div>
+        <p className="section-label">YOUR NEXT CHAPTER STARTS HERE</p>
+        <h2>Ready to discover your next opportunity?</h2>
+        <p className="section-description">
+          Sign in to explore job openings, discover internships,
+          and track your applications in one place.
+        </p>
+        <button
+          className="btn btn-primary"
+          onClick={() => openAuth("register")}
+        >
+          Get Started <ArrowRight size={16} />
+        </button>
+      </div>
+    </div>
+  )}
+</section>
 
-                  <button
-                    className="apply-link"
-                    onClick={() => setSelectedJob(job)}
-                  >
-                    View Details <ArrowRight size={16} />
-                  </button>
-
-                  <button
-                    className="apply-link"
-                    onClick={() => handleApplyClick(job)}
-                  >
-                    Apply Now
-                  </button>
-                </div>
-              </article>
-            ))}
-          </div>
-        ) : (
-          <div className="empty-state">
-            <Search size={30} />
-            <h3>No matching opportunities</h3>
-            <p>
-              Try another job title, company, location or category.
-            </p>
-            <button
-              className="btn btn-outline"
-              onClick={() => setSearch("")}
-            >
-              Clear search
-            </button>
-          </div>
-        )}
-      </section>
     </>
   )}
 </main>
