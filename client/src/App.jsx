@@ -1,6 +1,10 @@
 import JobDetails from "./JobDetails";
 import AdminDashboard from "./AdminDashboard";
 import MyApplications from "./MyApplications";
+import { BrowserRouter, useNavigate, useLocation } from "react-router-dom";
+import JobsPage from "./pages/JobsPage";
+import AboutPage from "./pages/AboutPage";
+import InternshipsPage from "./pages/InternshipsPage";
 import { useEffect, useState } from "react";
 import {
   Search,
@@ -27,6 +31,8 @@ function App() {
   const [jobError, setJobError] = useState("");
   const [search, setSearch] = useState("");
   const [mobileMenu, setMobileMenu] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   // Authentication state
   const [showApplications, setShowApplications] = useState(false);
@@ -261,16 +267,41 @@ const response = await fetch(
           {mobileMenu ? <X /> : <Menu />}
         </button>
 
-        <nav className={mobileMenu ? "nav-links open" : "nav-links"}>
-          <a href="#home" onClick={() => setMobileMenu(false)}>Home</a>
-          <a href="#opportunities" onClick={() => setMobileMenu(false)}>
-            Find Jobs
-          </a>
-          <a href="#about" onClick={() => setMobileMenu(false)}>About</a>
-          <a href="#opportunities" onClick={() => setMobileMenu(false)}>
-            Internships
-          </a>
-        </nav>
+        
+<nav className={mobileMenu ? "nav-links open" : "nav-links"}>
+  <a href="/" onClick={(e) => {
+    e.preventDefault();
+    navigate("/");
+    setMobileMenu(false);
+  }}>
+    Home
+  </a>
+
+  <a href="/jobs" onClick={(e) => {
+    e.preventDefault();
+    navigate("/jobs");
+    setMobileMenu(false);
+  }}>
+    Find Jobs
+  </a>
+
+  <a href="/about" onClick={(e) => {
+    e.preventDefault();
+    navigate("/about");
+    setMobileMenu(false);
+  }}>
+    About
+  </a>
+
+  <a href="/internships" onClick={(e) => {
+    e.preventDefault();
+    navigate("/internships");
+    setMobileMenu(false);
+  }}>
+    Internships
+  </a>
+</nav>
+
 
        
 <div className="nav-actions">
@@ -323,198 +354,253 @@ const response = await fetch(
 
       </header>
 
-      <main>
-        <section className="hero" id="home">
-          <div className="hero-content">
-            <div className="eyebrow">
-              <span className="eyebrow-dot" />
-              YOUR CAREER JOURNEY STARTS HERE
+      
+<main>
+  {location.pathname === "/about" ? (
+    <AboutPage />
+  ) : location.pathname === "/jobs" ? (
+    <JobsPage
+      jobs={jobs}
+      loading={loading}
+      error={jobError}
+      onViewDetails={(job) => setSelectedJob(job)}
+      onApply={(job) => handleApplyClick(job)}
+      onBack={() => navigate("/")}
+    />
+  ) : location.pathname === "/internships" ? (
+    <InternshipsPage
+      jobs={jobs}
+      loading={loading}
+      error={jobError}
+      onViewDetails={(job) => setSelectedJob(job)}
+      onApply={(job) => handleApplyClick(job)}
+      onBack={() => navigate("/")}
+    />
+  ) : (
+    <>
+      {/* HERO SECTION */}
+      <section className="hero" id="home">
+        <div className="hero-content">
+          <div className="eyebrow">
+            <span className="eyebrow-dot" />
+            YOUR CAREER JOURNEY STARTS HERE
+          </div>
+
+          <h1>
+            Your future is
+            <br />
+            <span>full of possibilities.</span>
+          </h1>
+
+          <p className="hero-description">
+            Discover internships, explore exciting job opportunities,
+            and take the next step toward your dream career.
+          </p>
+
+          <form
+            className="search-box"
+            onSubmit={(event) => {
+              event.preventDefault();
+              navigate("/jobs");
+            }}
+          >
+            <Search size={21} />
+            <input
+              type="text"
+              placeholder="Job title, company or location"
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+            />
+            <button
+              className="btn btn-primary search-button"
+              type="submit"
+            >
+              Search Jobs
+            </button>
+          </form>
+
+          <div className="popular-searches">
+            <span>Popular:</span>
+            <button type="button" onClick={() => setSearch("Development")}>
+              Development
+            </button>
+            <button type="button" onClick={() => {
+              setSearch("Internship");
+              navigate("/internships");
+            }}>
+              Internship
+            </button>
+            <button type="button" onClick={() => {
+              setSearch("Remote");
+              navigate("/jobs");
+            }}>
+              Remote
+            </button>
+          </div>
+        </div>
+
+        <div className="hero-visual">
+          <div className="visual-orb orb-one" />
+          <div className="visual-orb orb-two" />
+
+          <div className="career-card">
+            <div className="career-card-top">
+              <div className="career-icon">
+                <BriefcaseBusiness size={25} />
+              </div>
+              <span className="status-pill">Opportunities await</span>
             </div>
 
-            <h1>
-              Your future is
-              <br />
-              <span>full of possibilities.</span>
-            </h1>
-
-            <p className="hero-description">
-              Discover internships, explore exciting job opportunities,
-              and take the next step toward your dream career.
+            <p className="card-caption">YOUR NEXT CHAPTER</p>
+            <h2>Find work that moves you forward.</h2>
+            <p className="career-card-description">
+              Connect your skills with opportunities that match your ambitions.
             </p>
 
-            <form
-              className="search-box"
-              onSubmit={(event) => {
-                event.preventDefault();
-                document.getElementById("opportunities")?.scrollIntoView({
-                  behavior: "smooth",
-                });
-              }}
-            >
-              <Search size={21} />
-              <input
-                type="text"
-                placeholder="Job title, company or location"
-                value={search}
-                onChange={(event) => setSearch(event.target.value)}
-              />
-              <button className="btn btn-primary search-button" type="submit">
-                Search Jobs
-              </button>
-            </form>
-
-            <div className="popular-searches">
-              <span>Popular:</span>
-              <button type="button" onClick={() => setSearch("Development")}>
-                Development
-              </button>
-              <button type="button" onClick={() => setSearch("Internship")}>
-                Internship
-              </button>
-              <button type="button" onClick={() => setSearch("Remote")}>
-                Remote
-              </button>
-            </div>
-          </div>
-
-          <div className="hero-visual">
-            <div className="visual-orb orb-one" />
-            <div className="visual-orb orb-two" />
-
-            <div className="career-card">
-              <div className="career-card-top">
-                <div className="career-icon">
-                  <BriefcaseBusiness size={25} />
-                </div>
-                <span className="status-pill">Opportunities await</span>
+            <div className="mini-profile">
+              <div className="profile-avatars">
+                <span>T</span>
+                <span>A</span>
+                <span>R</span>
               </div>
-
-              <p className="card-caption">YOUR NEXT CHAPTER</p>
-              <h2>Find work that moves you forward.</h2>
-              <p className="career-card-description">
-                Connect your skills with opportunities that match your ambitions.
-              </p>
-
-              <div className="mini-profile">
-                <div className="profile-avatars">
-                  <span>T</span>
-                  <span>A</span>
-                  <span>R</span>
-                </div>
-                <div>
-                  <strong>Made for students</strong>
-                  <p>Explore. Apply. Grow.</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="floating-note">
-              <span className="floating-note-icon">
-                <TrendingUp size={20} />
-              </span>
               <div>
-                <strong>Start growing</strong>
-                <p>Your career, your journey</p>
+                <strong>Made for students</strong>
+                <p>Explore. Apply. Grow.</p>
               </div>
             </div>
           </div>
-        </section>
 
-        <section className="stats-section" id="about">
-          <div className="stat-item">
-            <span className="stat-icon"><BriefcaseBusiness size={21} /></span>
-            <div>
-              <strong>Job Opportunities</strong>
-              <p>Explore career openings</p>
-            </div>
-          </div>
-          <div className="stat-item">
-            <span className="stat-icon"><Building2 size={21} /></span>
-            <div>
-              <strong>Company Connections</strong>
-              <p>Discover potential employers</p>
-            </div>
-          </div>
-          <div className="stat-item">
-            <span className="stat-icon"><Users size={21} /></span>
-            <div>
-              <strong>Student Focused</strong>
-              <p>Built for your next step</p>
-            </div>
-          </div>
-        </section>
-
-        <section className="opportunities-section" id="opportunities">
-          <div className="section-heading">
-            <div>
-              <p className="section-label">TAKE THE NEXT STEP</p>
-              <h2>Featured opportunities</h2>
-              <p className="section-description">
-                Explore internships and jobs stored in CampusConnect.
-              </p>
-            </div>
-            <span className="listing-count">
-              {filteredJobs.length} opportunities
+          <div className="floating-note">
+            <span className="floating-note-icon">
+              <TrendingUp size={20} />
             </span>
+            <div>
+              <strong>Start growing</strong>
+              <p>Your career, your journey</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* STATS SECTION */}
+      <section className="stats-section" id="about">
+        <div className="stat-item">
+          <span className="stat-icon">
+            <BriefcaseBusiness size={21} />
+          </span>
+          <div>
+            <strong>Job Opportunities</strong>
+            <p>Explore career openings</p>
+          </div>
+        </div>
+
+        <div className="stat-item">
+          <span className="stat-icon">
+            <Building2 size={21} />
+          </span>
+          <div>
+            <strong>Company Connections</strong>
+            <p>Discover potential employers</p>
+          </div>
+        </div>
+
+        <div className="stat-item">
+          <span className="stat-icon">
+            <Users size={21} />
+          </span>
+          <div>
+            <strong>Student Focused</strong>
+            <p>Built for your next step</p>
+          </div>
+        </div>
+      </section>
+
+      {/* FEATURED OPPORTUNITIES SECTION */}
+      <section className="opportunities-section" id="opportunities">
+        <div className="section-heading">
+          <div>
+            <p className="section-label">TAKE THE NEXT STEP</p>
+            <h2>Featured opportunities</h2>
+            <p className="section-description">
+              Explore internships and jobs stored in CampusConnect.
+            </p>
           </div>
 
-          {loading ? (
-            <p className="jobs-message">Loading opportunities...</p>
-          ) : jobError ? (
-            <p className="jobs-message error-message">{jobError}</p>
-          ) : filteredJobs.length > 0 ? (
-            <div className="job-grid">
-              {filteredJobs.map((job) => (
-                <article className="job-card" key={job._id || job.id}>
-                  <div className="job-card-top">
-                    <div className={`company-logo ${job.color || "blue"}`}>
-                      {(job.company || "?").charAt(0).toUpperCase()}
-                    </div>
-                    <span className="job-type">{job.type}</span>
+          <span className="listing-count">
+            {filteredJobs.length} opportunities
+          </span>
+        </div>
+
+        {loading ? (
+          <p className="jobs-message">Loading opportunities...</p>
+        ) : jobError ? (
+          <p className="jobs-message error-message">{jobError}</p>
+        ) : filteredJobs.length > 0 ? (
+          <div className="job-grid">
+            {filteredJobs.map((job) => (
+              <article
+                className="job-card"
+                key={job._id || job.id}
+              >
+                <div className="job-card-top">
+                  <div className={`company-logo ${job.color || "blue"}`}>
+                    {(job.company || "?").charAt(0).toUpperCase()}
                   </div>
+                  <span className="job-type">{job.type}</span>
+                </div>
 
-                  <h3>{job.role}</h3>
-                  <p className="company-name">{job.company}</p>
+                <h3>{job.role}</h3>
+                <p className="company-name">{job.company}</p>
 
-                  <div className="job-details">
-                    <span><MapPin size={15} /> {job.location}</span>
-                    <span><Clock3 size={15} /> {job.duration || "Not specified"}</span>
-                  </div>
+                <div className="job-details">
+                  <span>
+                    <MapPin size={15} /> {job.location}
+                  </span>
+                  <span>
+                    <Clock3 size={15} /> {job.duration || "Not specified"}
+                  </span>
+                </div>
 
-                 
-<div className="job-card-bottom">
-  <span className="category-tag">{job.category}</span>
+                <div className="job-card-bottom">
+                  <span className="category-tag">{job.category}</span>
 
-  <button
-  className="apply-link"
-  onClick={() => setSelectedJob(job)}
->
-  View Details <ArrowRight size={16} />
-</button>
+                  <button
+                    className="apply-link"
+                    onClick={() => setSelectedJob(job)}
+                  >
+                    View Details <ArrowRight size={16} />
+                  </button>
 
-  <button
-    className="apply-link"
-    onClick={() => handleApplyClick(job)}
-  >
-    Apply Now
-  </button>
-</div>
+                  <button
+                    className="apply-link"
+                    onClick={() => handleApplyClick(job)}
+                  >
+                    Apply Now
+                  </button>
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div className="empty-state">
+            <Search size={30} />
+            <h3>No matching opportunities</h3>
+            <p>
+              Try another job title, company, location or category.
+            </p>
+            <button
+              className="btn btn-outline"
+              onClick={() => setSearch("")}
+            >
+              Clear search
+            </button>
+          </div>
+        )}
+      </section>
+    </>
+  )}
+</main>
 
-                </article>
-              ))}
-            </div>
-          ) : (
-            <div className="empty-state">
-              <Search size={30} />
-              <h3>No matching opportunities</h3>
-              <p>Try another job title, company, location or category.</p>
-              <button className="btn btn-outline" onClick={() => setSearch("")}>
-                Clear search
-              </button>
-            </div>
-          )}
-        </section>
-      </main>
 
       <footer className="footer">
         <a className="brand footer-brand" href="#home">
@@ -661,4 +747,10 @@ const response = await fetch(
   );
 }
 
-export default App;
+export default function AppRouter() {
+  return (
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  );
+}
